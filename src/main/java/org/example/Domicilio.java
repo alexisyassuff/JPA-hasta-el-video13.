@@ -1,9 +1,9 @@
 package org.example;
-
-
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -11,15 +11,12 @@ import javax.persistence.*;
 @ToString
 @Builder
 @Entity
-@Table(name = "Persona")
-public class Persona {
+@Table(name = "Domicilio")
+public class Domicilio implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String nombre;
-    private int edad;
-
-    // Constructor, getters y setters
-
+    private long id;
+    private String nombreCalle;
+    private int numero;
 
 }

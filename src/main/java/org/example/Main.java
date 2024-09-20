@@ -1,5 +1,7 @@
 
 package org.example;
+import org.example.Cliente;
+/*/ <property name="javax.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/~/test"/> /*/
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -16,72 +18,52 @@ public class Main {
             // Persistir una nueva entidad Person
             em.getTransaction().begin();
 
-            Persona persona = Persona.builder()
-                    .edad(7)
-                    .nombre("Sarli").
-
+            Cliente cliente = Cliente.builder()
+                    .dni(45143369)
+                    .nombre("Alexis").
+                    apellido("Yassuff").
                     build();
 
-;
+            em.persist(cliente);
+            Domicilio domicilio = Domicilio.builder()
+                    .nombreCalle("Ramon")
+                    .numero(12).
+                    build();
+            em.persist(domicilio);
 
-            System.out.println("IMPRIMO PERSONA ANTES  DE GRABAR");
-            System.out.println("--------------------");
-            System.out.println(persona);
+            cliente.setDomicilio(domicilio);
 
-            em.persist(persona);
+            Factura fact1 = Factura.builder()
+                    .fecha("02/08/2024")
+                    .numero(123)
+                    .total(2000).
+                    build();
 
-           em.getTransaction().commit();
+            em.persist(fact1);
 
-           // Cuando hace el commit pasa a estado manejado y posee un id
+            Categoria categoria = Categoria.builder()
+                    .denominacion("Deportes")
+                    .build();
+            em.persist(categoria);
 
-            System.out.println("IMPRIMO PERSONA LUEGO DE GRABAR");
+            Articulo articulo = Articulo.builder()
+                    .cantidad(5)
+                    .denominacion("Pelota")
+                    .precio(200)
+                    .build();
+            articulo.getCategorias().add(categoria);  // Agregar la categoría al artículo
+            em.persist(articulo);
 
-            System.out.println(persona);
+            DetalleFactura detalleFactura = DetalleFactura.builder()
+                    .subtotal(2300)
+                    .cantidad(3)
+                    .articulo(articulo)
+                    .factura(fact1)
+                    .build();
+            em.persist(detalleFactura);
+            fact1.setCliente(cliente);
 
-
-
-
-
-
-            // Actualizar la persona
-            em.getTransaction().begin();
-           persona.setEdad(979);
-            persona.setNombre("Alejandro");
-            em.merge(persona);
             em.getTransaction().commit();
-
-            // Buscar la persona por ID
-               Persona personaEncontrada = em.find(Persona.class, persona.getId());
-
-            System.out.println("Persona encontrada: " + personaEncontrada);
-
-
-            // Desconectar la entidad (estado Detached)
-         em.getTransaction().begin();
-          em.detach(persona);
-           em.getTransaction().commit();
-
-            System.out.println("Voy a eliminar persona que ya no está vinculada");
-            // Eliminar la persona
-              em.getTransaction().begin();
-              em.remove(persona);
-              em.getTransaction().commit();
-
-
-           System.out.println("Me tiene que dar error");
-            //Buscar la persona por ID
-            Persona personaEncontrada1 = em.find(Persona.class, persona.getId());
-
-            System.out.println("Persona encontrada desde la base de datos: " + personaEncontrada1);
-
-
-
-
-            // Eliminar la persona
-       //     em.getTransaction().begin();
-       //     em.remove(personaEncontrada);
-       //     em.getTransaction().commit();
-
 
         }catch (Exception e){
 
@@ -95,8 +77,8 @@ public class Main {
     }
 }
 
-/*
 
+/*
 Manejo del Ciclo de Estados en JPA
 El ciclo de estados en JPA (Java Persistence API) define los diferentes estados que puede tener una entidad en relación con el contexto de persistencia (EntityManager). Comprender y manejar correctamente estos estados es crucial para trabajar eficazmente con JPA. Los estados del ciclo de vida de una entidad en JPA son:
 
